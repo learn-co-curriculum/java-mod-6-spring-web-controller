@@ -83,6 +83,28 @@ controller so we can use it in the class.
 Now that we have talked about the class level annotations and the dependency, we
 will look at the individual details and the annotations used.
 
+## Running the Application
+
+We are using Maven as the build tool and can run the following command to start
+our application:
+
+```
+./mvnw spring-boot:run
+```
+
+We can also use the globally installed `mvn` tool to run the application:
+
+```
+mvn spring-boot:run
+```
+
+Both of these commands will start the web application on the localhost at port
+`8080`. We can append the API endpoints defined in our controller to the default
+`http://localhost:8080/` address to get the desired response from the
+application. For example, we can make a `GET` request to
+`http://localhost:8080/api/members` to retrieve a list of all the members in the
+database.
+
 ## Post Method
 
 ```java

@@ -3,227 +3,153 @@
 ## Learning Goals
 
 - Create a controller class.
-- Configure it to return JSON formatted response.
-- Accept different client parameters.
+- Accept different request parameters.
 
 ## Introduction
 
-The controller is where we will define which methods a client request is routed
-to and what should be sent back as a response. Spring provides several
-annotations to make it easy to manage requests, responses, and client
-parameters.
+The **controller** is where we will define which methods a client request is
+routed to and what should be sent back as a response. Spring provides several
+annotations in the `org.springframework.web.bind.annotation` package to make it
+easy to manage requests, responses, and client parameters.
 
 ## Add the Controller Class
 
-Create a class called `MemberController` in the `controller` package and add the
-following code:
+In the previous lesson, we created a class called `LunchController.java`. Open up
+the Java file in IntelliJ and add the following code:
 
 ```java
-package org.example.springwebdemo.controller;
+package com.example.springwebdemo.controller;
 
-import org.example.springwebdemo.model.Member;
-import org.example.springwebdemo.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
-public class MemberController {
-    @Autowired
-    MemberService memberService;
+public class LunchController {
 
-    @PostMapping("/members")
-    public Member createMember(@RequestBody Member member) {
-        return memberService.createMember(member);
-    }
-
-    @GetMapping("/members")
-    public List<Member> readMembers() {
-        return memberService.getMembers();
-    }
-
-    @GetMapping("/members/{memberId}")
-    public Member readMember(@PathVariable(value = "memberId") Integer id) {
-        return memberService.getMember(id);
-    }
-
-    @PutMapping("/members/{memberId}")
-    public Member updateMember(@PathVariable(value = "memberId") Integer id, @RequestBody Member memberData) {
-        return memberService.updateMember(id, memberData);
-    }
-
-    @DeleteMapping("/members/{memberId}")
-    public void deleteMember(@PathVariable(value = "memberId") Integer id) {
-        memberService.deleteMember(id);
-    }
+  @GetMapping("/")
+  //localhost:8080/
+  public String index() {
+    return "Welcome to Spring Boot!";
+  }
 }
 ```
+
+Now let's run this application and see what happens! Remember, to run the
+application, navigate back to the default class. In this case, the default class
+ is `SpringWebDemoApplication`. Click the green play button next to the `main`
+method.
+
+The console should pop up and show something that looks like this:
+
+![spring-application-started](https://curriculum-content.s3.amazonaws.com/spring-mod-1/controller/spring-boot-application-console.png)
+
+Notice that, unlike the last time we ran our default class, it does not just start
+and then immediately finish executing. It's still running!
+
+Open a browser and type in "http://localhost:8080/" into the URL. This is where
+our Spring application should be running. "localhost" is the standard hostname
+that a machine gives itself and "8080" is the default port that Tomcat started on.
+We can see the default port actually in the console log when we start up our
+Spring Boot application. When the browser loads the web page, we should see this:
+
+![welcome-index](https://curriculum-content.s3.amazonaws.com/spring-mod-1/controller/welcome-to-spring-boot.PNG)
+
+It's the same message we return in the `index()` method within the
+`LunchController`! So what exactly happened?
+
+Let's look at the annotations we used!
 
 ### @RestController
 
 The `@RestController` combines the following annotations:
 
 - `@Controller`: Indicates to Spring that the class represents a controller.
-- `@ResponseBody`: Configures Spring to return JSON response from controller
-  methods instead of view templates which is the default.
+- `@ResponseBody`: Configures Spring to return a JSON response from the controller
+  methods instead of view templates, which is the default.
 
-### @RequestMapping
-
-This annotation defines the base URL for the API. If our base URL is
-`http://www.example.org` and we use `/api` as the value for `@RequestMapping`,
-it would create the base API as `http://www.example.org/api`.
-
-### MemberService Injection
-
-The `MemberService` object is injected automatically by Spring into the
-controller so we can use it in the class.
-
-Now that we have talked about the class level annotations and the dependency, we
-will look at the individual details and the annotations used.
-
-## Running the Application
-
-We are using Maven as the build tool and can run the following command to start
-our application:
-
-```
-./mvnw spring-boot:run
-```
-
-We can also use the globally installed `mvn` tool to run the application:
-
-```
-mvn spring-boot:run
-```
-
-Both of these commands will start the web application on the localhost at port
-`8080`. We can append the API endpoints defined in our controller to the default
-`http://localhost:8080/` address to get the desired response from the
-application. For example, we can make a `GET` request to
-`http://localhost:8080/api/members` to retrieve a list of all the members in the
-database.
-
-## Post Method
-
-```java
-@PostMapping("/members")
-public Member createMember(@RequestBody Member member) {
-    return memberService.createMember(member);
-}
-```
-
-This method is creating the `/api/members` endpoint for the `POST` HTTP method
-and persisting the data sent from the client. The data from the client is a JSON
-object like the following:
-
-```json
-{
-	"name": "Jack"
-	"email": "jack@example.com"
-}
-```
-
-### @PostMapping
-
-The `@PostMapping` annotation is a shorthand for the
-`@RequestMapping(value="/members", method=RequestMethod.POST)` annotation. Both
-of these annotations define the endpoint path as `/api/members`
-
-### @RequestBody
-
-This annotation allows the method to accept JSON formatted client data and
-convert it to a Java object. For example, the JSON object mentioned above would
-be mapped to a `Member` object with the `name` and `email` attributes set to the
-values in the JSON.
-
-## Get Methods
-
-We will look at both of the `GET` methods in this section. Let’s start with the
-first one.
-
-### readMembers
-
-```java
-@GetMapping("/members")
-public List<Member> readMembers() {
-    return memberService.getMembers();
-}
-```
+### @GetMapping
 
 The `@GetMapping` is a shorthand for the
-`@RequestMapping(value="/members", method=RequestMethod.GET)` annotation. Both
-of these annotations define the endpoint path as `/api/members`.
+`@RequestMapping(value="/", method=RequestMethod.GET)` annotation. Both
+of these annotations define the endpoint path as `/`, or the root path.
 
-The `readMembers` method calls the `memberService` to retrieve all the member
-records from the database and returns a JSON like this:
+The controller class handles the client requests and responses. So, the client
+sent the request by navigating to the specified route (i.e., "localhost:8080/").
+The controller class then finds the corresponding method based off of the route,
+in our case, `/`, which is mapped to the method `index()`. The `index()` method
+will then return "Welcome to Spring Boot!" back as a response, which then is
+shown in the browser.
 
-```json
-[
-  {
-    "id": 1,
-    "name": "john",
-    "email": "john@example.com"
-  },
-  {
-    "id": 2,
-    "name": "Liam",
-    "email": "liam@example.com"
-  }
-]
-```
+## Request Parameters
 
-### readMember
+Now that we understand how the controller class works, let's add a couple of more
+methods given the requirements:
 
-```java
-@GetMapping("/members/{memberId}")
-public Member readMember(@PathVariable(value = "memberId") Integer id) {
-    return memberService.getMember(id);
-}
-```
+- Greet the customer.
+- Tell the customer the daily lunch special.
+- Thank the customer for coming into our cafeteria.
 
-The `{memberId}` in the `@GetMapping` value is a dynamic value which takes on
-the value of the client’s request path parameter. For example, the following URL
-would assign the value of `1` to `memberId` and `id`:
+Let's first look at how to greet the customer.
 
-```json
-http://localhost:8080/api/members/1
-```
-
-The `@PathVariable` annotation maps the dynamic path value to the method
-parameter `id`.
-
-## Update Method
+Add the following method to the `LunchController`:
 
 ```java
-@PutMapping("/members/{memberId}")
-public Member updateMember(@PathVariable(value = "memberId") Integer id, @RequestBody Member memberData) {
-    return memberService.updateMember(id, memberData);
-}
+    @GetMapping("/greet")
+    //localhost:8080/greet?name=Ted
+    public String greet(@RequestParam(defaultValue = "customer") String name) {
+        return String.format("Greetings %s!", name);
+    }
 ```
 
-The `@PutMapping` is a shorthand for the
-`@RequestMapping(value="/members/{memberId}", method=RequestMethod.PUT)`. This
-method is using `@PathVariable` to get the ID of the record that needs to be
-updated and `@RequestBody` to get the data sent by the client.
+In the method above, notice how we define the route to "/greet". This means, to
+have the web application call this method, we'll need to navigate to
+"http://localhost:8080/greet".
 
-## Delete Method
+Also notice how our method takes a parameter this time. If we have a method that
+takes in a parameter, we can use the `@RequestParam` annotation. The
+`@RequestParam` annotation indicates that a method parameter should be bound to
+the web request as a parameter. In this case, the parameter is called `name`. If
+we want to provide a name to the request, we can use the HTTP request:
+"http://localhost:8080/greet?name=Ted"; this would then return a `String` with a
+value of "Greetings Ted!". If we do not specify a name, then we can provide a
+default value. In the example above, we specify the `defaultValue` to "customer".
 
-```java
-@DeleteMapping("/members/{memberId}")
-public void deleteMember(@PathVariable(value = "memberId") Integer id) {
-    memberService.deleteMember(id);
-}
-```
+Let's try running the application again, and this time, we'll open the browser to
+"http://localhost:8080/greet":
 
-The `@DeleteMapping` is a shorthand for the
-`@RequestMapping(value="/members/{memberId}", method=RequestMethod.DELETE)`
-annotation. This method calls the `deleteMember` method on the `memberService`
-class which removes the record with the given ID from the database.
+![param-with-default-value](https://curriculum-content.s3.amazonaws.com/spring-mod-1/controller/greetings-customer.png)
+
+Notice we did not specify the parameter `name` in the URL, so it returns the
+default value of "customer".
+
+Now let's specify the parameter. With the application still running, go to:
+"http://localhost:8080/greet?name=Ted":
+
+![param-with-name](https://curriculum-content.s3.amazonaws.com/spring-mod-1/controller/greetings-ted.png)
+
+The `@RequestParam` takes in some other optional elements as well. See the
+Spring documentation
+[RequestParam Annotation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestParam.html)
+for more information.
+
+### Your Turn
+
+Try to add another method on your own now using the annotations we have learned
+about! Create a method called `thank()` and have it take in a `String name` as a
+parameter and return a `String` that says "Thanks [name]! Have a great day!".
+
+When you run the application and view it in the browser, it should look something
+like this:
+
+![thank-customer](https://curriculum-content.s3.amazonaws.com/spring-mod-1/controller/thanks-ted.png)
 
 ## Conclusion
 
 We have learned how to create the controller class, map routes to methods, and
-get information from client requests. In the next lesson, we will learn how to
-run the application and test the API endpoints.
+get information from client requests.
+
+## References
+
+- [RestController Annotation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RestController.html)
+- [GetMapping Annotation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/GetMapping.html)
+- [RequestParam Annotation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestParam.html)

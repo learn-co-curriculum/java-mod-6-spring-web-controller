@@ -89,6 +89,9 @@ methods given the requirements:
 - Tell the customer the daily lunch special.
 - Thank the customer for coming into our cafeteria.
 
+In this lesson, we will focus on the first and last requirements. We will
+address the second requirement in the next lesson.
+
 Let's first look at how to greet the customer.
 
 Add the following method to the `LunchController`:

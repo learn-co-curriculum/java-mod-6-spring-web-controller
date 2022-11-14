@@ -64,8 +64,8 @@ Let's look at the annotations we used!
 The `@RestController` combines the following annotations:
 
 - `@Controller`: Indicates to Spring that the class represents a controller.
-- `@ResponseBody`: Configures Spring to return a JSON response from the controller
-  methods instead of view templates, which is the default.
+- `@ResponseBody`: Configures Spring to return a response from the controller
+  methods that is bound to the web response body.
 
 ### @GetMapping
 
